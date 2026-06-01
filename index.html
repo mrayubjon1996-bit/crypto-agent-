@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -52,9 +53,7 @@
             margin: 5px 0;
             text-shadow: 0 0 10px rgba(255,255,255,0.2);
         }
-        .change-value {
-            font-size: 16px;
-        }
+        .change-value { font-size: 16px; }
         .change-up { color: #00ff66; }
         .change-down { color: #ff3366; }
         .chart-container {
@@ -71,15 +70,14 @@
 <body>
 
     <div class="header">
-        <code>[⚡ AYUB INTELLIGENT CRYPTO SYSTEM v1.0]</code><br>
-        СТАТУС: ПОДКЛЮЧЕНО К СЕРВЕРАМ БИРЖИ
+        <code>[⚡ AYUB INTELLIGENT CRYPTO SYSTEM]</code><br>
+        СТАТУС: ПОДКЛЮЧЕНО К БИРЖЕ BINANCE
     </div>
 
     <select class="ticker-select" id="cryptoSelect">
         <option value="BTCUSDT">BTC / USDT (Bitcoin)</option>
         <option value="ETHUSDT">ETH / USDT (Ethereum)</option>
         <option value="SOLUSDT">SOL / USDT (Solana)</option>
-        <option value="BNBUSDT">BNB / USDT (Binance Coin)</option>
     </select>
 
     <div class="price-box">
@@ -99,15 +97,12 @@
         let currentSymbol = "BTCUSDT";
         let chart;
 
-        // Элементы экрана
         const priceEl = document.getElementById('cryptoPrice');
         const changeEl = document.getElementById('cryptoChange');
         const selectEl = document.getElementById('cryptoSelect');
 
-        // Функция загрузки данных и отрисовки графика
         async function loadData(symbol) {
             try {
-                // 1. Получаем текущую цену и изменение за 24 часа
                 const tickerRes = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
                 const tickerData = await tickerRes.json();
                 
@@ -123,15 +118,13 @@
                     changeEl.className = "change-value change-down";
                 }
 
-                // 2. Получаем исторические свечи для графика (последние 24 часа, интервал 1 час)
                 const klinesRes = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1h&limit=24`);
                 const klinesData = await klinesRes.json();
 
-                const prices = klinesData.map(k => parseFloat(k[4])); // Цены закрытия свечей
-                const labels = klinesData.map((k, index) => `${index + 1}ч назад`);
+                const prices = klinesData.map(k => parseFloat(k[4]));
+                const labels = klinesData.map((k, index) => `${index + 1}ч`);
 
-                // 3. Строим график
-                if (chart) chart.destroy(); // Стираем старый график перед новым
+                if (chart) chart.destroy();
 
                 const ctx = document.getElementById('cryptoChart').getContext('2d');
                 chart = new Chart(ctx, {
@@ -139,7 +132,7 @@
                     data: {
                         labels: labels.reverse(),
                         datasets: [{
-                            label: `Цена ${symbol}`,
+                            label: symbol,
                             data: prices,
                             borderColor: '#00ff66',
                             borderWidth: 2,
@@ -152,34 +145,24 @@
                     options: {
                         responsive: true,
                         scales: {
-                            x: { grid: { color: '#222' }, ticks: { color: '#888', font: { family: 'monospace' } } },
-                            y: { grid: { color: '#222' }, ticks: { color: '#888', font: { family: 'monospace' } } }
+                            x: { grid: { color: '#222' }, ticks: { color: '#888' } },
+                            y: { grid: { color: '#222' }, ticks: { color: '#888' } }
                         },
-                        plugins: {
-                            legend: { display: false }
-                        }
+                        plugins: { legend: { display: false } }
                     }
                 });
-
             } catch (err) {
-                priceEl.innerText = "Ошибка сети";
+                priceEl.innerText = "Ошибка загрузки";
             }
         }
 
-        // Следим за сменой криптовалюты в меню
         selectEl.addEventListener('change', (e) => {
             currentSymbol = e.target.value;
             loadData(currentSymbol);
-            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
         });
 
-        // Первая загрузка при старте
         loadData(currentSymbol);
-
-        // Авто-обновление цены каждые 5 секунд
-        setInterval(() => {
-            loadData(currentSymbol);
-        }, 5000);
+        setInterval(() => loadData(currentSymbol), 7000);
     </script>
 </body>
 </html>
