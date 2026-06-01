@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -121,8 +120,8 @@
                 const klinesRes = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1h&limit=24`);
                 const klinesData = await klinesRes.json();
 
-                const prices = klinesData.map(k => parseFloat(k[4]));
-                const labels = klinesData.map((k, index) => `${index + 1}ч`);
+                const prices = klinesData.map(k => parseFloat(k[4])).reverse();
+                const labels = klinesData.map((k, index) => `${index + 1}ч`).reverse();
 
                 if (chart) chart.destroy();
 
@@ -130,7 +129,7 @@
                 chart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: labels.reverse(),
+                        labels: labels,
                         datasets: [{
                             label: symbol,
                             data: prices,
