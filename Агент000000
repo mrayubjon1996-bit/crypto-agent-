@@ -1,0 +1,2376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CryptoSint Pro — Blockchain Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #07090f;
+  --bg2: #0d1117;
+  --bg3: #111827;
+  --panel: #0f1520;
+  --border: #1e2d45;
+  --border2: #243347;
+  --accent: #00d4ff;
+  --accent2: #0099cc;
+  --green: #00ff88;
+  --red: #ff3366;
+  --orange: #ff8c00;
+  --yellow: #ffd700;
+  --purple: #a855f7;
+  --text: #c8d8e8;
+  --text2: #7a9ab5;
+  --text3: #3d5a70;
+  --mono: 'Share Tech Mono', monospace;
+  --head: 'Barlow Condensed', sans-serif;
+  --body: 'Barlow', sans-serif;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.015) 2px, rgba(0,212,255,0.015) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+#topbar {
+  height: 52px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.logo {
+  font-family: var(--head);
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 4px;
+  color: var(--accent);
+  text-shadow: 0 0 20px rgba(0,212,255,0.5);
+  text-transform: uppercase;
+}
+.logo span { color: var(--green); }
+
+.top-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text2);
+}
+
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.top-actions {  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  font-family: var(--head);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 1px;
+  padding: 6px 14px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.05); }
+.btn.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+.btn.primary:hover { background: #00b8d9; }
+.btn.danger { border-color: var(--red); color: var(--red); }
+.btn.danger:hover { background: rgba(255,51,102,0.1); }
+.btn.success { border-color: var(--green); color: var(--green); }
+.btn.success:hover { background: rgba(0,255,136,0.08); }
+.btn.warn { border-color: var(--orange); color: var(--orange); }
+.btn.warn:hover { background: rgba(255,140,0,0.08); }
+
+#main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  height: calc(100vh - 52px);
+}
+
+#left-panel {
+  width: 280px;
+  min-width: 280px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-section {
+  border-bottom: 1px solid var(--border);
+  padding: 12px;
+}
+.section-title {
+  font-family: var(--head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.search-wrap { display: flex; gap: 6px; }
+
+.input {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 7px 10px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input:focus { border-color: var(--accent); }
+.input::placeholder { color: var(--text3); }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.stat-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+}
+
+.stat-val {
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.stat-lbl {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 1px;  margin-top: 3px;
+}
+
+#node-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+#node-list::-webkit-scrollbar { width: 4px; }
+#node-list::-webkit-scrollbar-track { background: var(--bg); }
+#node-list::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.node-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  margin-bottom: 2px;
+  transition: all 0.1s;
+}
+
+.node-item:hover { background: rgba(0,212,255,0.05); border-color: var(--border); }
+.node-item.active { background: rgba(0,212,255,0.08); border-color: var(--accent); }
+
+.node-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.node-info { flex: 1; overflow: hidden; }
+
+.node-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.node-type {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.risk-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 5px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+#graph-container {
+  flex: 1;
+  position: relative;
+  background: var(--bg);
+  overflow: hidden;
+  height: 100%;
+}
+
+#graph-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+
+#graph-canvas:active { cursor: grabbing; }
+
+#graph-controls {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 6px;
+  flex-direction: column;
+}
+
+.icon-btn {
+  width: 32px; height: 32px;
+  background: var(--panel);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+#graph-info-bar {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.graph-legend {
+  display: flex;
+  gap: 14px;
+  background: rgba(13,17,23,0.9);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  pointer-events: all;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text2);
+}
+
+.legend-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+}
+
+#right-panel {
+  width: 420px;
+  min-width: 420px;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.tab {  flex: 1;
+  padding: 11px 4px;
+  font-family: var(--head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  text-align: center;
+  transition: all 0.15s;
+  background: transparent;
+  border-right: 1px solid var(--border);
+}
+
+.tab:last-child { border-right: none; }
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.quick-actions {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+#ai-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#chat-messages::-webkit-scrollbar { width: 4px; }
+#chat-messages::-webkit-scrollbar-track { background: var(--bg); }
+#chat-messages::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.msg {  max-width: 100%;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.msg-user {
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 2px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--text);
+  align-self: flex-end;
+  max-width: 90%;
+}
+
+.msg-ai {
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent);
+  padding: 10px 12px;
+  background: var(--bg2);
+}
+
+.msg-ai-header {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.msg-ai-header::before {
+  content: '▶';
+  font-size: 8px;
+}
+
+.msg-ai-body {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.msg-ai-body strong { color: var(--accent); font-weight: 600; }
+.msg-ai-body .risk-high { color: var(--red); font-weight: 600; }
+.msg-ai-body .risk-med { color: var(--orange); font-weight: 600; }
+.msg-ai-body .risk-low { color: var(--green); font-weight: 600; }
+.msg-ai-body code {
+  background: var(--bg3);
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--yellow);
+}
+.msg-ai-body h4 {
+  color: var(--accent);
+  font-family: var(--head);
+  font-size: 14px;
+  margin: 8px 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.msg-system {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  padding: 4px 0;
+}
+
+.typing {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent);
+  background: var(--bg2);
+}
+
+.typing-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: bounce 1.2s infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+#chat-input-area {
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+#chat-input {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 13px;
+  padding: 8px 10px;
+  outline: none;
+  resize: none;
+  height: 70px;
+  transition: border-color 0.15s;
+}
+
+#chat-input:focus { border-color: var(--accent); }
+#chat-input::placeholder { color: var(--text3); }
+
+.send-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ANALYTICS TAB */
+.analytics-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+}
+
+.analytics-content::-webkit-scrollbar { width: 4px; }
+.analytics-content::-webkit-scrollbar-track { background: var(--bg); }
+.analytics-content::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.metric-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--accent);
+}
+
+.metric-card.risk-high::before { background: var(--red); }
+.metric-card.risk-med::before { background: var(--orange); }
+.metric-card.risk-low::before { background: var(--green); }
+
+.metric-val {
+  font-family: var(--mono);
+  font-size: 22px;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.metric-lbl {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+.metric-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+
+.chart-box {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 12px;  margin-bottom: 12px;
+}
+
+.chart-title {
+  font-family: var(--head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text2);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.chart-wrap {
+  position: relative;
+  height: 180px;
+}
+
+.alerts-list {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 10px;
+}
+
+.alert-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.alert-item:last-child { border-bottom: none; }
+
+.alert-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.alert-body { flex: 1; }
+
+.alert-title {
+  font-family: var(--head);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+.alert-title.high { color: var(--red); }
+.alert-title.medium { color: var(--orange); }
+.alert-title.low { color: var(--yellow); }
+
+.alert-desc {
+  color: var(--text2);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* MODAL */
+#modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+#modal-overlay.active { display: flex; }
+
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border2);
+  width: 600px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 24px;
+  position: relative;
+}
+
+.modal-title {
+  font-family: var(--head);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;  background: none;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  width: 28px; height: 28px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover { border-color: var(--red); color: var(--red); }
+
+.dropzone {
+  border: 2px dashed var(--border2);
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 12px;
+}
+
+.dropzone:hover, .dropzone.drag { border-color: var(--accent); background: rgba(0,212,255,0.03); }
+.dropzone-icon { font-size: 32px; margin-bottom: 8px; color: var(--text3); }
+.dropzone-text { font-family: var(--mono); font-size: 12px; color: var(--text2); }
+
+textarea.report-out {
+  width: 100%;
+  height: 300px;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 12px;
+  outline: none;
+  resize: vertical;
+}
+
+#toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 10px 20px;  z-index: 9999;
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+.tab-content {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.tab-content.active { display: flex; }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="logo">Crypto<span>Sint</span> Pro</div>
+  <div class="top-status">
+    <div class="status-dot"></div>
+    <span>AI AGENT ONLINE</span>
+  </div>
+  <div class="top-status" style="margin-left:12px">
+    <div class="status-dot" style="background:var(--orange);box-shadow:0 0 8px var(--orange)"></div>
+    <span id="etherscan-status">ETHERSCAN: KEY NEEDED</span>
+  </div>
+  <div class="top-actions">
+    <button class="btn" onclick="openImport()">⬆ Import</button>
+    <button class="btn" onclick="openExport()">⬇ Export</button>
+    <button class="btn warn" onclick="quickAnalyzeAll()">⚡ AI Analysis</button>
+    <button class="btn" onclick="openSettings()">⚙ Settings</button>
+  </div>
+</div>
+
+<div id="main">
+
+  <div id="left-panel">
+    <div class="panel-section">
+      <div class="section-title">Add Address</div>
+      <div class="search-wrap">
+        <input class="input" id="addr-input" placeholder="0x... or ENS name" />
+        <button class="btn primary" onclick="addAddressFromInput()" style="padding:6px 10px">+</button>
+      </div>
+      <div style="margin-top:6px;display:flex;gap:4px">
+        <button class="btn" style="font-size:11px;padding:4px 8px;flex:1" onclick="fetchEtherscan()">Fetch Onchain</button>
+        <button class="btn" style="font-size:11px;padding:4px 8px;flex:1" onclick="autoLink()">Auto-Link</button>
+      </div>    </div>
+    <div class="panel-section">
+      <div class="section-title">Investigation Stats</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-val" id="stat-nodes">16</div>
+          <div class="stat-lbl">Nodes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-edges">21</div>
+          <div class="stat-lbl">Connections</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val risk-high" id="stat-high" style="color:var(--red)">5</div>
+          <div class="stat-lbl">High Risk</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-volume" style="color:var(--yellow)">2.4M</div>
+          <div class="stat-lbl">Vol (USD)</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-section" style="padding-bottom:6px">
+      <div class="section-title">Node Registry</div>
+      <input class="input" id="filter-input" placeholder="filter by label or type..." oninput="filterNodes()" style="width:100%;margin-bottom:8px" />
+    </div>
+    <div id="node-list"></div>
+  </div>
+
+  <div id="graph-container">
+    <canvas id="graph-canvas"></canvas>
+    <div id="graph-controls">
+      <button class="icon-btn" onclick="zoomIn()" title="Zoom In">+</button>
+      <button class="icon-btn" onclick="zoomOut()" title="Zoom Out">−</button>
+      <button class="icon-btn" onclick="resetView()" title="Reset">⌂</button>
+      <button class="icon-btn" onclick="togglePhysics()" id="physics-btn" title="Toggle Physics">⚛</button>
+      <button class="icon-btn" onclick="toggleLabels()" title="Toggle Labels">T</button>
+    </div>
+    <div id="graph-info-bar">
+      <div class="graph-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#00d4ff"></div>Wallet</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#00ff88"></div>Exchange</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff3366"></div>Mixer</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff8c00"></div>Contract</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div>Bridge</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffd700"></div>Suspect</div>
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3)" id="hover-info"></div>
+    </div>
+  </div>
+  <div id="right-panel">
+    <div class="tab-bar">
+      <button class="tab active" onclick="switchTab('ai')" id="tab-ai">AI Agent</button>
+      <button class="tab" onclick="switchTab('details')" id="tab-details">Details</button>
+      <button class="tab" onclick="switchTab('analytics')" id="tab-analytics">Analytics</button>
+      <button class="tab" onclick="switchTab('graph-stats')" id="tab-graph-stats">Graph</button>
+    </div>
+
+    <div id="tab-content-ai" class="tab-content active">
+      <div class="quick-actions">
+        <button class="btn danger" style="font-size:10px;padding:4px 8px" onclick="quickQ('Найди все миксеры и опиши путь отмывания средств. Укажи конкретные узлы и суммы.')">🔴 Mixers</button>
+        <button class="btn warn" style="font-size:10px;padding:4px 8px" onclick="quickQ('Какие 3 узла имеют наивысший риск и почему? Обоснуй на основе графа.')">⚠ Top Risks</button>
+        <button class="btn" style="font-size:10px;padding:4px 8px" onclick="quickQ('Опиши самую подозрительную цепочку транзакций в этом графе.')">🔗 Chain</button>
+        <button class="btn success" style="font-size:10px;padding:4px 8px" onclick="quickQ('Какие узлы выглядят чистыми/низкорисковыми?')">✓ Clean</button>
+        <button class="btn" style="font-size:10px;padding:4px 8px;border-color:var(--purple);color:var(--purple)" onclick="quickQ('Сгенерируй краткое резюме расследования для compliance-отчёта.')">📋 Report</button>
+      </div>
+      <div id="ai-chat">
+        <div id="chat-messages">
+          <div class="msg-system">— CRYPTOSINT PRO AI AGENT INITIALIZED —</div>
+          <div class="msg msg-ai">
+            <div class="msg-ai-header">CRYPTOSINT AGENT</div>
+            <div class="msg-ai-body">Граф загружен: <strong>16 узлов</strong>, <strong>21 связь</strong>. AI-аналитика активна.
+
+Доступны: PageRank, обнаружение паттернов, поиск путей, кластеризация, аномалии.
+
+Используйте быстрые кнопки выше или задайте вопрос ниже.</div>
+          </div>
+        </div>
+        <div id="chat-input-area">
+          <textarea id="chat-input" placeholder="Спросите о кошельках, потоках, рисках...&#10;например: "Проследи средства от W-001 до биржи"" onkeydown="handleKey(event)"></textarea>
+          <div class="send-col">
+            <button class="btn primary" onclick="sendChat()" style="height:100%;padding:0 12px">▶</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-content-details" class="tab-content">
+      <div id="details-content" style="color:var(--text3);font-family:var(--mono);font-size:12px;text-align:center;padding-top:40px;flex:1">
+        Select a node to view details
+      </div>
+    </div>
+
+    <div id="tab-content-analytics" class="tab-content">
+      <div class="analytics-content" id="analytics-content">
+        <div style="color:var(--text3);font-family:var(--mono);font-size:12px;text-align:center;padding-top:40px">
+          Loading analytics...
+        </div>
+      </div>    </div>
+
+    <div id="tab-content-graph-stats" class="tab-content">
+      <div style="flex:1;overflow-y:auto;padding:12px" id="graph-stats-content"></div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-overlay" onclick="if(event.target===this) closeModal()">
+  <div class="modal" id="modal-body"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+
+const COLORS = {
+  wallet: '#00d4ff',
+  exchange: '#00ff88',
+  mixer: '#ff3366',
+  contract: '#ff8c00',
+  bridge: '#a855f7',
+  suspect: '#ffd700',
+  unknown: '#7a9ab5'
+};
+
+let nodes = [
+  { id:'W-001', label:'W-001', type:'wallet', risk:'high', address:'0x1a2b3c4d5e6f...', volume:'450000', tx:142, note:'Origin wallet — large irregular transfers' },
+  { id:'W-002', label:'W-002', type:'wallet', risk:'medium', address:'0x2b3c4d5e6f7a...', volume:'89000', tx:34 },
+  { id:'W-003', label:'W-003', type:'wallet', risk:'low', address:'0x3c4d5e6f7a8b...', volume:'12000', tx:8 },
+  { id:'W-004', label:'W-004', type:'wallet', risk:'high', address:'0x4d5e6f7a8b9c...', volume:'230000', tx:67, note:'Rapid cycling through mixer' },
+  { id:'W-005', label:'W-005', type:'wallet', risk:'medium', address:'0x5e6f7a8b9c0d...', volume:'55000', tx:21 },
+  { id:'MIX-01', label:'MIX-01', type:'mixer', risk:'high', address:'0x6f7a8b9c0d1e...', volume:'1200000', tx:890, note:'Tornado Cash fork — flagged by OFAC' },
+  { id:'MIX-02', label:'MIX-02', type:'mixer', risk:'high', address:'0x7a8b9c0d1e2f...', volume:'780000', tx:445, note:'ChipMixer variant' },
+  { id:'EX-01', label:'Binance', type:'exchange', risk:'low', address:'0x8b9c0d1e2f3a...', volume:'3400000', tx:12000 },
+  { id:'EX-02', label:'Kraken', type:'exchange', risk:'low', address:'0x9c0d1e2f3a4b...', volume:'2100000', tx:8900 },
+  { id:'EX-03', label:'Kucoin', type:'exchange', risk:'medium', address:'0x0d1e2f3a4b5c...', volume:'430000', tx:1200, note:'Lax KYC enforcement' },
+  { id:'SC-01', label:'SC-01', type:'contract', risk:'medium', address:'0x1e2f3a4b5c6d...', volume:'670000', tx:234, note:'Unverified flash loan contract' },
+  { id:'SC-02', label:'SC-02', type:'contract', risk:'low', address:'0x2f3a4b5c6d7e...', volume:'120000', tx:56 },
+  { id:'BR-01', label:'ETH→BSC', type:'bridge', risk:'medium', address:'0x3a4b5c6d7e8f...', volume:'890000', tx:340, note:'Cross-chain bridge used to obscure trail' },
+  { id:'SUS-01', label:'SUS-01', type:'suspect', risk:'high', address:'0x4b5c6d7e8f9a...', volume:'310000', tx:89, note:'Linked to known darknet market' },
+  { id:'SUS-02', label:'SUS-02', type:'suspect', risk:'high', address:'0x5c6d7e8f9a0b...', volume:'175000', tx:45, note:'Dust attack origin' },
+  { id:'W-006', label:'W-006', type:'wallet', risk:'low', address:'0x6d7e8f9a0b1c...', volume:'23000', tx:12 },
+];
+
+let edges = [
+  { from:'W-001', to:'MIX-01', volume:200000, label:'200K USDT' },  { from:'W-001', to:'W-002', volume:89000, label:'89K ETH' },
+  { from:'W-001', to:'SC-01', volume:150000, label:'150K' },
+  { from:'W-002', to:'MIX-02', volume:55000, label:'55K' },
+  { from:'W-002', to:'EX-03', volume:34000, label:'34K' },
+  { from:'MIX-01', to:'W-004', volume:195000, label:'195K' },
+  { from:'MIX-01', to:'SUS-01', volume:120000, label:'120K' },
+  { from:'MIX-01', to:'BR-01', volume:80000, label:'80K' },
+  { from:'MIX-02', to:'W-005', volume:50000, label:'50K' },
+  { from:'MIX-02', to:'SUS-02', volume:30000, label:'30K' },
+  { from:'W-004', to:'EX-01', volume:130000, label:'130K' },
+  { from:'W-004', to:'EX-02', volume:95000, label:'95K' },
+  { from:'SC-01', to:'SC-02', volume:90000, label:'90K' },
+  { from:'SC-02', to:'W-003', volume:45000, label:'45K' },
+  { from:'SC-02', to:'W-006', volume:23000, label:'23K' },
+  { from:'BR-01', to:'W-005', volume:75000, label:'75K' },
+  { from:'SUS-01', to:'EX-03', volume:80000, label:'80K' },
+  { from:'SUS-01', to:'W-004', volume:40000, label:'40K' },
+  { from:'SUS-02', to:'MIX-01', volume:28000, label:'28K' },
+  { from:'W-005', to:'EX-02', volume:120000, label:'120K' },
+  { from:'W-003', to:'EX-01', volume:12000, label:'12K' },
+];
+
+let selectedNode = null;
+let chatHistory = [];
+let etherscanKey = '';
+let analyticsInstance = null;
+let charts = {};
+
+// ═══════════════════════════════════════════════════════
+// GRAPH ANALYTICS ENGINE
+// ═══════════════════════════════════════════════════════
+
+class GraphAnalytics {
+  constructor(nodes, edges) {
+    this.nodes = nodes;
+    this.edges = edges;
+    this.adjacency = this.buildAdjacency();
+  }
+
+  buildAdjacency() {
+    const adj = {};
+    this.nodes.forEach(n => adj[n.id] = []);
+    this.edges.forEach(e => {
+      if (!adj[e.from]) adj[e.from] = [];
+      if (!adj[e.to]) adj[e.to] = [];
+      adj[e.from].push({ to: e.to, volume: e.volume });
+    });
+    return adj;
+  }
+  // PageRank algorithm
+  pageRank(damping = 0.85, iterations = 30) {
+    const N = this.nodes.length;
+    const ranks = {};
+    this.nodes.forEach(n => ranks[n.id] = 1 / N);
+
+    for (let iter = 0; iter < iterations; iter++) {
+      const newRanks = {};
+      this.nodes.forEach(n => newRanks[n.id] = (1 - damping) / N);
+
+      this.nodes.forEach(n => {
+        const outDegree = this.adjacency[n.id]?.length || 1;
+        const share = ranks[n.id] / outDegree;
+        (this.adjacency[n.id] || []).forEach(edge => {
+          newRanks[edge.to] = (newRanks[edge.to] || 0) + damping * share;
+        });
+      });
+
+      Object.assign(ranks, newRanks);
+    }
+
+    return ranks;
+  }
+
+  // BFS path finding
+  findPath(startId, endId) {
+    const visited = new Set();
+    const queue = [[startId]];
+    visited.add(startId);
+
+    while (queue.length > 0) {
+      const path = queue.shift();
+      const current = path[path.length - 1];
+
+      if (current === endId) return path;
+
+      (this.adjacency[current] || []).forEach(edge => {
+        if (!visited.has(edge.to)) {
+          visited.add(edge.to);
+          queue.push([...path, edge.to]);
+        }
+      });
+    }
+    return null;
+  }
+
+  // Find all paths through mixers
+  findMixerPaths() {
+    const mixers = this.nodes.filter(n => n.type === 'mixer').map(n => n.id);
+    const exchanges = this.nodes.filter(n => n.type === 'exchange').map(n => n.id);    const paths = [];
+
+    mixers.forEach(mixer => {
+      exchanges.forEach(exchange => {
+        const path = this.findPath(mixer, exchange);
+        if (path) {
+          const totalVolume = this.calculatePathVolume(path);
+          paths.push({
+            path,
+            volume: totalVolume,
+            mixer,
+            exchange,
+            length: path.length
+          });
+        }
+      });
+    });
+
+    return paths.sort((a, b) => b.volume - a.volume);
+  }
+
+  calculatePathVolume(path) {
+    let total = 0;
+    for (let i = 0; i < path.length - 1; i++) {
+      const edge = this.edges.find(e => e.from === path[i] && e.to === path[i + 1]);
+      if (edge) total += edge.volume;
+    }
+    return total;
+  }
+
+  // Detect patterns
+  detectPatterns() {
+    const patterns = [];
+
+    // Mixer flow pattern
+    const mixers = this.nodes.filter(n => n.type === 'mixer');
+    mixers.forEach(mixer => {
+      const incoming = this.edges.filter(e => e.to === mixer.id);
+      const outgoing = this.edges.filter(e => e.from === mixer.id);
+      if (incoming.length > 0 && outgoing.length > 0) {
+        const inVol = incoming.reduce((s, e) => s + e.volume, 0);
+        const outVol = outgoing.reduce((s, e) => s + e.volume, 0);
+        patterns.push({
+          type: 'MIXER_FLOW',
+          severity: 'high',
+          node: mixer.id,
+          description: `Mixer ${mixer.id}: $${this.formatNum(inVol)} IN → $${this.formatNum(outVol)} OUT`,
+          inCount: incoming.length,
+          outCount: outgoing.length
+        });      }
+    });
+
+    // Fan-out pattern (one source to many destinations)
+    this.nodes.forEach(n => {
+      const outgoing = this.edges.filter(e => e.from === n.id);
+      if (outgoing.length >= 3) {
+        patterns.push({
+          type: 'FAN_OUT',
+          severity: outgoing.length >= 5 ? 'high' : 'medium',
+          node: n.id,
+          description: `Node ${n.id} sends to ${outgoing.length} destinations (possible distribution)`,
+          count: outgoing.length
+        });
+      }
+    });
+
+    // Consolidation pattern (many sources to one destination)
+    this.nodes.forEach(n => {
+      const incoming = this.edges.filter(e => e.to === n.id);
+      if (incoming.length >= 3) {
+        patterns.push({
+          type: 'CONSOLIDATION',
+          severity: 'medium',
+          node: n.id,
+          description: `Node ${n.id} receives from ${incoming.length} sources (possible aggregation)`,
+          count: incoming.length
+        });
+      }
+    });
+
+    // Circular flow detection
+    this.nodes.forEach(n => {
+      const path = this.findPath(n.id, n.id);
+      if (path && path.length > 2) {
+        patterns.push({
+          type: 'CIRCULAR_FLOW',
+          severity: 'high',
+          node: n.id,
+          description: `Circular flow detected: ${path.join(' → ')}`,
+          path
+        });
+      }
+    });
+
+    return patterns;
+  }
+
+  // Detect anomalies
+  detectAnomalies() {    const anomalies = [];
+    const volumes = this.nodes.map(n => parseInt(n.volume) || 0);
+    const mean = volumes.reduce((s, v) => s + v, 0) / volumes.length;
+    const stdDev = Math.sqrt(volumes.reduce((s, v) => s + (v - mean) ** 2, 0) / volumes.length);
+
+    this.nodes.forEach(n => {
+      const vol = parseInt(n.volume) || 0;
+      const zScore = (vol - mean) / stdDev;
+
+      if (Math.abs(zScore) > 2) {
+        anomalies.push({
+          type: 'HIGH_VOLUME',
+          severity: zScore > 3 ? 'high' : 'medium',
+          node: n.id,
+          description: `Volume $${this.formatNum(vol)} is ${zScore.toFixed(1)}σ from mean`,
+          zScore: zScore.toFixed(2)
+        });
+      }
+    });
+
+    // High transaction count anomaly
+    const txCounts = this.nodes.map(n => n.tx || 0);
+    const txMean = txCounts.reduce((s, v) => s + v, 0) / txCounts.length;
+    const txStd = Math.sqrt(txCounts.reduce((s, v) => s + (v - txMean) ** 2, 0) / txCounts.length);
+
+    this.nodes.forEach(n => {
+      const tx = n.tx || 0;
+      const zScore = (tx - txMean) / txStd;
+      if (zScore > 2.5) {
+        anomalies.push({
+          type: 'HIGH_TX_COUNT',
+          severity: 'medium',
+          node: n.id,
+          description: `Transaction count ${tx} is ${zScore.toFixed(1)}σ from mean`,
+          zScore: zScore.toFixed(2)
+        });
+      }
+    });
+
+    return anomalies;
+  }
+
+  // Cluster detection (simple connected components)
+  findClusters() {
+    const visited = new Set();
+    const clusters = [];
+
+    this.nodes.forEach(n => {
+      if (!visited.has(n.id)) {
+        const cluster = [];        const queue = [n.id];
+        visited.add(n.id);
+
+        while (queue.length > 0) {
+          const current = queue.shift();
+          cluster.push(current);
+
+          (this.adjacency[current] || []).forEach(edge => {
+            if (!visited.has(edge.to)) {
+              visited.add(edge.to);
+              queue.push(edge.to);
+            }
+          });
+
+          // Also check incoming edges
+          this.edges.forEach(e => {
+            if (e.to === current && !visited.has(e.from)) {
+              visited.add(e.from);
+              queue.push(e.from);
+            }
+          });
+        }
+
+        if (cluster.length > 1) clusters.push(cluster);
+      }
+    });
+
+    return clusters;
+  }
+
+  // Calculate overall risk score
+  calculateRiskScore() {
+    const riskWeights = { high: 1.0, medium: 0.5, low: 0.1 };
+    const typeWeights = { mixer: 1.0, suspect: 0.9, bridge: 0.6, contract: 0.5, exchange: 0.2, wallet: 0.3 };
+
+    let totalRisk = 0;
+    let maxRisk = 0;
+
+    this.nodes.forEach(n => {
+      const riskScore = (riskWeights[n.risk] || 0.5) * (typeWeights[n.type] || 0.5);
+      totalRisk += riskScore;
+      maxRisk += 1.0;
+    });
+
+    const patterns = this.detectPatterns();
+    const patternRisk = patterns.filter(p => p.severity === 'high').length * 0.1;
+
+    return Math.min(1.0, (totalRisk / maxRisk) + patternRisk);
+  }
+  formatNum(num) {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(0) + 'K';
+    return num.toString();
+  }
+
+  generateReport() {
+    const pageRank = this.pageRank();
+    const mixerPaths = this.findMixerPaths();
+    const patterns = this.detectPatterns();
+    const anomalies = this.detectAnomalies();
+    const clusters = this.findClusters();
+    const riskScore = this.calculateRiskScore();
+
+    return {
+      overallRisk: riskScore,
+      pageRank,
+      mixerPaths,
+      patterns,
+      anomalies,
+      clusters,
+      nodeCount: this.nodes.length,
+      edgeCount: this.edges.length,
+      highRiskNodes: this.nodes.filter(n => n.risk === 'high').length,
+      totalVolume: this.nodes.reduce((s, n) => s + (parseInt(n.volume) || 0), 0)
+    };
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// GRAPH ENGINE
+// ═══════════════════════════════════════════════════════
+
+const canvas = document.getElementById('graph-canvas');
+const ctx = canvas.getContext('2d');
+
+let positions = {};
+let velocities = {};
+let transform = { x: 0, y: 0, scale: 1 };
+let isDragging = false;
+let dragNode = null;
+let lastMouse = { x: 0, y: 0 };
+let physicsOn = true;
+let showLabels = true;
+let animFrame;
+
+function initPositions() {
+  const cx = canvas.width / 2, cy = canvas.height / 2;
+  nodes.forEach((n, i) => {
+    if (!positions[n.id]) {      const angle = (i / nodes.length) * Math.PI * 2;
+      const r = 180 + Math.random() * 80;
+      positions[n.id] = { x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r };
+      velocities[n.id] = { x: 0, y: 0 };
+    }
+  });
+}
+
+function resizeCanvas() {
+  const container = document.getElementById('graph-container');
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;
+}
+
+function getNodeRadius(n) {
+  const vol = parseInt((n.volume || '0').replace(/,/g, ''));
+  return Math.max(14, Math.min(28, 14 + vol / 200000));
+}
+
+function applyPhysics() {
+  if (!physicsOn) return;
+  const repulsion = 3500, spring = 0.025, damping = 0.82, gravity = 0.008;
+  const cx = canvas.width / 2, cy = canvas.height / 2;
+
+  nodes.forEach(a => {
+    if (!positions[a.id]) return;
+    const pa = positions[a.id], va = velocities[a.id];
+
+    nodes.forEach(b => {
+      if (a.id === b.id || !positions[b.id]) return;
+      const pb = positions[b.id];
+      const dx = pa.x - pb.x, dy = pa.y - pb.y;
+      const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+      const f = repulsion / (dist * dist);
+      va.x += (dx / dist) * f;
+      va.y += (dy / dist) * f;
+    });
+
+    va.x += (cx - pa.x) * gravity;
+    va.y += (cy - pa.y) * gravity;
+    va.x *= damping; va.y *= damping;
+    pa.x += va.x; pa.y += va.y;
+  });
+
+  edges.forEach(e => {
+    const pa = positions[e.from], pb = positions[e.to];
+    if (!pa || !pb) return;
+    const dx = pb.x - pa.x, dy = pb.y - pa.y;
+    const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+    const ideal = 160;    const f = (dist - ideal) * spring;
+    const vf = velocities[e.from], vt = velocities[e.to];
+    vf.x += (dx / dist) * f; vf.y += (dy / dist) * f;
+    vt.x -= (dx / dist) * f; vt.y -= (dy / dist) * f;
+  });
+}
+
+function drawArrow(x1, y1, x2, y2, color, width, dashed) {
+  ctx.save();
+  if (dashed) ctx.setLineDash([5, 4]);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+  const len = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+  const ex = x1 + Math.cos(angle) * (len - 14);
+  const ey = y1 + Math.sin(angle) * (len - 14);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(ex, ey); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(ex + Math.cos(angle) * 8, ey + Math.sin(angle) * 8);
+  ctx.lineTo(ex + Math.cos(angle + 2.4) * 5, ey + Math.sin(angle + 2.4) * 5);
+  ctx.lineTo(ex + Math.cos(angle - 2.4) * 5, ey + Math.sin(angle - 2.4) * 5);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+function render() {
+  applyPhysics();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.save();
+  ctx.translate(transform.x, transform.y);
+  ctx.scale(transform.scale, transform.scale);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(30,45,69,0.4)';
+  ctx.lineWidth = 0.5;
+  for (let x = -1000; x < 3000; x += 60) {
+    ctx.beginPath(); ctx.moveTo(x, -1000); ctx.lineTo(x, 3000); ctx.stroke();
+  }
+  for (let y = -1000; y < 3000; y += 60) {
+    ctx.beginPath(); ctx.moveTo(-1000, y); ctx.lineTo(3000, y); ctx.stroke();
+  }
+
+  // Edges
+  edges.forEach(e => {
+    const pa = positions[e.from], pb = positions[e.to];
+    if (!pa || !pb) return;
+    const fromNode = nodes.find(n => n.id === e.from);    const toNode = nodes.find(n => n.id === e.to);
+    const isSuspicious = fromNode?.risk === 'high' || toNode?.risk === 'high';
+    const isMixer = fromNode?.type === 'mixer' || toNode?.type === 'mixer';
+
+    let color = 'rgba(30,45,69,0.8)';
+    if (isMixer) color = 'rgba(255,51,102,0.5)';
+    else if (isSuspicious) color = 'rgba(255,140,0,0.4)';
+
+    const vol = e.volume || 0;
+    const width = Math.max(0.5, Math.min(3, vol / 120000));
+
+    drawArrow(pa.x, pa.y, pb.x, pb.y, color, width, isMixer);
+
+    if (showLabels && e.label) {
+      const mx = (pa.x + pb.x) / 2, my = (pa.y + pb.y) / 2;
+      ctx.font = '9px Share Tech Mono';
+      ctx.fillStyle = 'rgba(120,160,185,0.7)';
+      ctx.textAlign = 'center';
+      ctx.fillText(e.label, mx, my - 4);
+    }
+  });
+
+  // Nodes
+  nodes.forEach(n => {
+    const p = positions[n.id];
+    if (!p) return;
+    const r = getNodeRadius(n);
+    const color = COLORS[n.type] || COLORS.unknown;
+    const isSelected = selectedNode?.id === n.id;
+
+    // Risk halo
+    if (n.risk === 'high') {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r + 8, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,51,102,0.3)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Selection ring
+    if (isSelected) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r + 6, 0, Math.PI * 2);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    // Node glow
+    const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 2.5);
+    grd.addColorStop(0, color + '30');
+    grd.addColorStop(1, 'transparent');
+    ctx.beginPath(); ctx.arc(p.x, p.y, r * 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = grd; ctx.fill();
+
+    // Node body
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = '#0d1117';
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = isSelected ? 2.5 : 1.5;
+    ctx.stroke();
+
+    // Inner dot
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, r * 0.35, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // Label
+    if (showLabels) {
+      ctx.font = `bold 10px Barlow Condensed`;
+      ctx.fillStyle = n.risk === 'high' ? '#ff6680' : '#c8d8e8';
+      ctx.textAlign = 'center';
+      ctx.fillText(n.label, p.x, p.y + r + 14);
+    }
+  });
+
+  ctx.restore();
+  animFrame = requestAnimationFrame(render);
+}
+
+// ═══════════════════════════════════════════════════════
+// INTERACTIONS
+// ═══════════════════════════════════════════════════════
+
+function getNodeAt(mx, my) {
+  const wx = (mx - transform.x) / transform.scale;
+  const wy = (my - transform.y) / transform.scale;
+  return nodes.find(n => {
+    const p = positions[n.id];
+    if (!p) return false;
+    const r = getNodeRadius(n) + 6;
+    return (wx - p.x) ** 2 + (wy - p.y) ** 2 < r * r;
+  });
+}
+canvas.addEventListener('mousedown', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const hit = getNodeAt(mx, my);
+  if (hit) {
+    dragNode = hit;
+    isDragging = false;
+  } else {
+    isDragging = true;
+  }
+  lastMouse = { x: mx, y: my };
+});
+
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const hover = getNodeAt(mx, my);
+  document.getElementById('hover-info').textContent = hover
+    ? `${hover.label} · ${hover.type.toUpperCase()} · RISK: ${hover.risk.toUpperCase()} · VOL: $${hover.volume}`
+    : '';
+
+  if (dragNode) {
+    const dx = mx - lastMouse.x, dy = my - lastMouse.y;
+    const p = positions[dragNode.id];
+    p.x += dx / transform.scale;
+    p.y += dy / transform.scale;
+    velocities[dragNode.id] = { x: 0, y: 0 };
+  } else if (isDragging) {
+    transform.x += mx - lastMouse.x;
+    transform.y += my - lastMouse.y;
+  }
+  lastMouse = { x: mx, y: my };
+});
+
+canvas.addEventListener('mouseup', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  if (dragNode && !isDragging) {
+    selectNode(dragNode);
+  }
+  dragNode = null;
+  isDragging = false;
+});
+
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const hit = getNodeAt(mx, my);
+  if (hit) selectNode(hit);
+});
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const factor = e.deltaY > 0 ? 0.9 : 1.1;
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  transform.x = mx - (mx - transform.x) * factor;
+  transform.y = my - (my - transform.y) * factor;
+  transform.scale = Math.max(0.2, Math.min(4, transform.scale * factor));
+});
+
+function zoomIn() { transform.scale = Math.min(4, transform.scale * 1.25); }
+function zoomOut() { transform.scale = Math.max(0.2, transform.scale * 0.8); }
+function resetView() {
+  transform = { x: 0, y: 0, scale: 1 };
+  initPositions();
+}
+function togglePhysics() {
+  physicsOn = !physicsOn;
+  document.getElementById('physics-btn').style.color = physicsOn ? 'var(--accent)' : 'var(--text3)';
+}
+function toggleLabels() { showLabels = !showLabels; }
+
+// ═══════════════════════════════════════════════════════
+// NODE SELECTION
+// ═══════════════════════════════════════════════════════
+
+function selectNode(n) {
+  selectedNode = n;
+  renderNodeList();
+
+  const detContent = document.getElementById('details-content');
+  const neighbors = edges
+    .filter(e => e.from === n.id || e.to === n.id)
+    .map(e => ({
+      id: e.from === n.id ? e.to : e.from,
+      dir: e.from === n.id ? 'OUT' : 'IN',
+      volume: e.volume,
+      label: e.label
+    }));
+
+  const riskColor = { high: 'var(--red)', medium: 'var(--orange)', low: 'var(--green)' }[n.risk];
+
+  detContent.innerHTML = `
+    <div style="padding:12px;flex:1;overflow-y:auto">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:14px;height:14px;border-radius:50%;background:${COLORS[n.type]};flex-shrink:0"></div>
+        <div>
+          <div style="font-family:var(--head);font-weight:700;font-size:18px;color:var(--text)">${n.label}</div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">${n.type}</div>        </div>
+        <div style="margin-left:auto;font-family:var(--mono);font-size:11px;color:${riskColor};border:1px solid ${riskColor};padding:3px 8px">RISK: ${n.risk.toUpperCase()}</div>
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);word-break:break-all;background:var(--bg3);padding:8px;border:1px solid var(--border);margin-bottom:12px">${n.address}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
+        <div style="background:var(--bg3);border:1px solid var(--border);padding:8px">
+          <div style="font-family:var(--mono);font-size:14px;color:var(--accent)">$${n.volume}</div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase">Volume</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);padding:8px">
+          <div style="font-family:var(--mono);font-size:14px;color:var(--accent)">${n.tx}</div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase">Transactions</div>
+        </div>
+      </div>
+      ${n.note ? `<div style="background:rgba(255,140,0,0.08);border:1px solid rgba(255,140,0,0.3);padding:8px 10px;margin-bottom:12px;font-size:12px;color:var(--orange)">⚠ ${n.note}</div>` : ''}
+      <div style="margin-bottom:10px">
+        <div style="font-family:var(--head);font-size:11px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:6px">Connections (${neighbors.length})</div>
+        ${neighbors.map(nb => {
+          const nn = nodes.find(x => x.id === nb.id);
+          return `<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border)">
+            <div style="width:8px;height:8px;border-radius:50%;background:${COLORS[nn?.type||'unknown']};flex-shrink:0"></div>
+            <div style="flex:1;font-family:var(--mono);font-size:11px">${nb.id}</div>
+            <div style="font-size:10px;color:${nb.dir==='OUT'?'var(--red)':'var(--green)'}">${nb.dir}</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text3)">${nb.label}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn primary" style="flex:1;font-size:12px" onclick="analyzeNodeWithAI('${n.id}')">⚡ AI Analyze</button>
+        <button class="btn" style="font-size:12px" onclick="lookupEtherscan('${n.address}')">🔍 Etherscan</button>
+      </div>
+    </div>
+  `;
+
+  switchTab('details');
+  updateGraphStats();
+}
+
+// ═══════════════════════════════════════════════════════
+// NODE LIST
+// ═══════════════════════════════════════════════════════
+
+function renderNodeList(filter = '') {
+  const container = document.getElementById('node-list');
+  const lf = filter.toLowerCase();
+  const filtered = nodes.filter(n =>
+    !lf || n.label.toLowerCase().includes(lf) || n.type.toLowerCase().includes(lf) || (n.note||'').toLowerCase().includes(lf)
+  );
+
+  container.innerHTML = filtered.map(n => {    const riskColor = { high: 'var(--red)', medium: 'var(--orange)', low: 'var(--green)' }[n.risk];
+    const isActive = selectedNode?.id === n.id;
+    return `<div class="node-item ${isActive ? 'active' : ''}" onclick="selectNode(nodes.find(x=>x.id==='${n.id}'))">
+      <div class="node-dot" style="background:${COLORS[n.type]}"></div>
+      <div class="node-info">
+        <div class="node-label">${n.label}</div>
+        <div class="node-type">${n.type}</div>
+      </div>
+      <div class="risk-badge" style="color:${riskColor};border-color:${riskColor}">${n.risk.toUpperCase()}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('stat-nodes').textContent = nodes.length;
+  document.getElementById('stat-edges').textContent = edges.length;
+  document.getElementById('stat-high').textContent = nodes.filter(n => n.risk === 'high').length;
+  const totalVol = nodes.reduce((s, n) => s + (parseInt(n.volume) || 0), 0);
+  document.getElementById('stat-volume').textContent = totalVol >= 1000000 ? (totalVol / 1000000).toFixed(1) + 'M' : (totalVol / 1000).toFixed(0) + 'K';
+}
+
+function filterNodes() {
+  renderNodeList(document.getElementById('filter-input').value);
+}
+
+// ═══════════════════════════════════════════════════════
+// GRAPH STATS
+// ═══════════════════════════════════════════════════════
+
+function updateGraphStats() {
+  const container = document.getElementById('graph-stats-content');
+  const degrees = {};
+  nodes.forEach(n => degrees[n.id] = 0);
+  edges.forEach(e => { degrees[e.from] = (degrees[e.from]||0) + 1; degrees[e.to] = (degrees[e.to]||0) + 1; });
+  const sortedByDegree = [...nodes].sort((a,b) => (degrees[b.id]||0) - (degrees[a.id]||0));
+
+  const typeCount = {};
+  nodes.forEach(n => typeCount[n.type] = (typeCount[n.type]||0) + 1);
+
+  container.innerHTML = `
+    <div style="margin-bottom:14px">
+      <div class="section-title" style="margin-bottom:8px">Node Types</div>
+      ${Object.entries(typeCount).map(([t, c]) => `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+          <div style="width:9px;height:9px;border-radius:50%;background:${COLORS[t]}"></div>
+          <div style="flex:1;font-size:12px;text-transform:capitalize">${t}</div>
+          <div style="font-family:var(--mono);font-size:12px;color:var(--accent)">${c}</div>
+          <div style="width:80px;background:var(--bg3);height:4px;border-radius:2px">
+            <div style="width:${(c/nodes.length*100).toFixed(0)}%;height:100%;background:${COLORS[t]};border-radius:2px"></div>
+          </div>
+        </div>`).join('')}
+    </div>    <div style="margin-bottom:14px">
+      <div class="section-title" style="margin-bottom:8px">Top Hubs (by connections)</div>
+      ${sortedByDegree.slice(0,6).map((n,i) => `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);width:16px">#${i+1}</div>
+          <div style="width:8px;height:8px;border-radius:50%;background:${COLORS[n.type]}"></div>
+          <div style="flex:1;font-family:var(--mono);font-size:11px">${n.label}</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--accent)">${degrees[n.id]} edges</div>
+        </div>`).join('')}
+    </div>
+    <div>
+      <div class="section-title" style="margin-bottom:8px">Risk Distribution</div>
+      ${['high','medium','low'].map(r => {
+        const count = nodes.filter(n => n.risk === r).length;
+        const col = { high: 'var(--red)', medium: 'var(--orange)', low: 'var(--green)' }[r];
+        return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+          <div style="font-family:var(--mono);font-size:11px;color:${col};width:50px;text-transform:uppercase">${r}</div>
+          <div style="flex:1;background:var(--bg3);height:5px;border-radius:2px">
+            <div style="width:${(count/nodes.length*100).toFixed(0)}%;height:100%;background:${col};border-radius:2px"></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:11px;color:${col}">${count}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════
+// ANALYTICS TAB
+// ═══════════════════════════════════════════════════════
+
+function renderAnalytics() {
+  analyticsInstance = new GraphAnalytics(nodes, edges);
+  const report = analyticsInstance.generateReport();
+
+  const container = document.getElementById('analytics-content');
+  const riskLevel = report.overallRisk > 0.7 ? 'high' : report.overallRisk > 0.4 ? 'med' : 'low';
+  const riskClass = { high: 'risk-high', med: 'risk-med', low: 'risk-low' }[riskLevel];
+
+  container.innerHTML = `
+    <div class="metrics-grid">
+      <div class="metric-card ${riskClass}">
+        <div class="metric-val">${(report.overallRisk * 100).toFixed(0)}%</div>
+        <div class="metric-lbl">Overall Risk</div>
+        <div class="metric-sub">${riskLevel.toUpperCase()} LEVEL</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val">${report.clusters.length}</div>
+        <div class="metric-lbl">Clusters</div>
+        <div class="metric-sub">Connected components</div>      </div>
+      <div class="metric-card ${report.mixerPaths.length > 0 ? 'risk-high' : 'risk-low'}">
+        <div class="metric-val">${report.mixerPaths.length}</div>
+        <div class="metric-lbl">Mixer Paths</div>
+        <div class="metric-sub">Suspicious flows</div>
+      </div>
+      <div class="metric-card ${report.anomalies.length > 0 ? 'risk-med' : 'risk-low'}">
+        <div class="metric-val">${report.anomalies.length}</div>
+        <div class="metric-lbl">Anomalies</div>
+        <div class="metric-sub">Statistical outliers</div>
+      </div>
+    </div>
+
+    <div class="chart-box">
+      <div class="chart-title">Risk Distribution</div>
+      <div class="chart-wrap"><canvas id="chart-risk"></canvas></div>
+    </div>
+
+    <div class="chart-box">
+      <div class="chart-title">Volume by Node Type</div>
+      <div class="chart-wrap"><canvas id="chart-volume"></canvas></div>
+    </div>
+
+    <div class="chart-box">
+      <div class="chart-title">PageRank Centrality (Top 8)</div>
+      <div class="chart-wrap"><canvas id="chart-pagerank"></canvas></div>
+    </div>
+
+    <div class="alerts-list">
+      <div class="chart-title" style="margin-bottom:10px">Detected Threats (${report.patterns.length + report.anomalies.length})</div>
+      ${[...report.patterns, ...report.anomalies].slice(0, 10).map(a => `
+        <div class="alert-item">
+          <div class="alert-icon">${a.severity === 'high' ? '🚨' : a.severity === 'medium' ? '⚠️' : 'ℹ️'}</div>
+          <div class="alert-body">
+            <div class="alert-title ${a.severity}">${a.type.replace(/_/g, ' ')}</div>
+            <div class="alert-desc">${a.description}</div>
+          </div>
+        </div>
+      `).join('') || '<div style="color:var(--text3);font-size:12px;padding:10px">No threats detected</div>'}
+    </div>
+  `;
+
+  // Destroy old charts
+  Object.values(charts).forEach(c => c?.destroy());
+  charts = {};
+
+  // Risk Distribution Chart
+  const riskCounts = { high: 0, medium: 0, low: 0 };
+  nodes.forEach(n => riskCounts[n.risk]++);
+  setTimeout(() => {
+    const ctxRisk = document.getElementById('chart-risk');
+    if (ctxRisk) {
+      charts.risk = new Chart(ctxRisk, {
+        type: 'doughnut',
+        data: {
+          labels: ['High', 'Medium', 'Low'],
+          datasets: [{
+            data: [riskCounts.high, riskCounts.medium, riskCounts.low],
+            backgroundColor: ['#ff3366', '#ff8c00', '#00ff88'],
+            borderColor: '#0f1520',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { color: '#c8d8e8', font: { family: 'Share Tech Mono', size: 11 } }
+            }
+          }
+        }
+      });
+    }
+
+    // Volume by Type Chart
+    const typeVolumes = {};
+    nodes.forEach(n => {
+      typeVolumes[n.type] = (typeVolumes[n.type] || 0) + (parseInt(n.volume) || 0);
+    });
+
+    const ctxVol = document.getElementById('chart-volume');
+    if (ctxVol) {
+      charts.volume = new Chart(ctxVol, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(typeVolumes).map(t => t.toUpperCase()),
+          datasets: [{
+            label: 'Volume (USD)',
+            data: Object.values(typeVolumes),
+            backgroundColor: Object.keys(typeVolumes).map(t => COLORS[t] + 'cc'),
+            borderColor: Object.keys(typeVolumes).map(t => COLORS[t]),
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              ticks: { color: '#7a9ab5', font: { family: 'Share Tech Mono', size: 10 } },
+              grid: { color: 'rgba(30,45,69,0.3)' }
+            },
+            x: {
+              ticks: { color: '#7a9ab5', font: { family: 'Share Tech Mono', size: 10 } },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    // PageRank Chart
+    const sortedPR = Object.entries(report.pageRank)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8);
+
+    const ctxPR = document.getElementById('chart-pagerank');
+    if (ctxPR) {
+      charts.pagerank = new Chart(ctxPR, {
+        type: 'line',
+        data: {
+          labels: sortedPR.map(([id]) => id),
+          datasets: [{
+            label: 'PageRank',
+            data: sortedPR.map(([, v]) => v),
+            borderColor: '#00d4ff',
+            backgroundColor: 'rgba(0,212,255,0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#00d4ff',
+            pointBorderColor: '#00d4ff',
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              ticks: { color: '#7a9ab5', font: { family: 'Share Tech Mono', size: 10 } },              grid: { color: 'rgba(30,45,69,0.3)' }
+            },
+            x: {
+              ticks: { color: '#7a9ab5', font: { family: 'Share Tech Mono', size: 10 } },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+  }, 100);
+}
+
+// ═══════════════════════════════════════════════════════
+// ONLINE AI CHAT ENGINE (HUGGING FACE)
+// ═══════════════════════════════════════════════════════
+
+function buildGraphContext() {
+  if (!analyticsInstance) analyticsInstance = new GraphAnalytics(nodes, edges);
+  const report = analyticsInstance.generateReport();
+
+  const nodeDesc = nodes.map(n =>
+    `${n.id} [${n.type}, risk=${n.risk}, vol=$${n.volume}, tx=${n.tx}${n.note ? ', NOTE: '+n.note : ''}]`
+  ).join('\n');
+
+  const edgeDesc = edges.map(e =>
+    `${e.from} → ${e.to} (${e.label})`
+  ).join('\n');
+
+  const topPR = Object.entries(report.pageRank)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([id, score]) => `${id}: ${(score * 100).toFixed(1)}%`)
+    .join(', ');
+
+  return `You are CryptoSint Pro, an advanced blockchain forensics AI agent with graph analytics capabilities.
+=== GRAPH METRICS ===
+Overall Risk: ${(report.overallRisk * 100).toFixed(1)}%
+Clusters: ${report.clusters.length}
+Mixer Paths: ${report.mixerPaths.length}
+Anomalies: ${report.anomalies.length}
+Top PageRank Nodes: ${topPR}
+
+=== NODES ===
+${nodeDesc}
+
+=== EDGES ===
+${edgeDesc}
+
+=== DETECTED PATTERNS ===${report.patterns.map(p => `- ${p.type}: ${p.description}`).join('\n') || 'None'}
+
+=== ANOMALIES ===
+${report.anomalies.map(a => `- ${a.type} at ${a.node}: ${a.description}`).join('\n') || 'None'}
+
+Instructions: Reference exact node IDs, trace money flows from mixers to exits. Be concise and analytical. Use markdown formatting: **bold**, \`code\`, lists. Format risk levels as: 🔴 HIGH, 🟠 MEDIUM, 🟢 LOW. Always answer in Russian.`;
+}
+
+async function callAI(userMessage, systemOverride = null) {
+  const systemContext = systemOverride || buildGraphContext();
+  const fullPrompt = `<|system|>\n${systemContext}\n<|user|>\n${userMessage}\n<|assistant|>\n`;
+
+  try {
+    const response = await fetch('https://api-inference.huggingface.co/models/Qwen/Qwen2.5-72B-Instruct', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        inputs: fullPrompt,
+        parameters: { max_new_tokens: 800, temperature: 0.7, stop: ["<|user|>", "<|system|>"] }
+      })
+    });
+
+    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+    const data = await response.json();
+
+    let aiText = "";
+    if (Array.isArray(data) && data[0]?.generated_text) {
+      aiText = data[0].generated_text.replace(fullPrompt, "").trim();
+    } else if (data.generated_text) {
+      aiText = data.generated_text.replace(fullPrompt, "").trim();
+    } else {
+      aiText = "Ошибка генерации текста ИИ.";
+    }
+    return aiText;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Не удалось получить ответ онлайн-модели. Проверьте сеть.");
+  }
+}
+
+function addMessage(role, content, header = null) {
+  const container = document.getElementById('chat-messages');
+
+  if (role === 'system') {
+    const div = document.createElement('div');
+    div.className = 'msg-system';
+    div.textContent = content;
+    container.appendChild(div);
+  } else if (role === 'user') {
+    const div = document.createElement('div');    div.className = 'msg msg-user';
+    div.textContent = content;
+    container.appendChild(div);
+  } else {
+    const div = document.createElement('div');
+    div.className = 'msg msg-ai';
+    div.innerHTML = `
+      <div class="msg-ai-header">${header || 'CRYPTOSINT AGENT'}</div>
+      <div class="msg-ai-body">${formatAIText(content)}</div>
+    `;
+    container.appendChild(div);
+  }
+
+  container.scrollTop = container.scrollHeight;
+}
+
+function formatAIText(text) {
+  return text
+    .replace(/####\s*(.*)/g, '<h4>$1</h4>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`(.*?)`/g, '<code>$1</code>')
+    .replace(/🔴 HIGH/g, '<span class="risk-high">🔴 HIGH</span>')
+    .replace(/🟠 MEDIUM/g, '<span class="risk-med">🟠 MEDIUM</span>')
+    .replace(/🟢 LOW/g, '<span class="risk-low">🟢 LOW</span>');
+}
+
+function showTyping() {
+  const container = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.id = 'typing-indicator';
+  div.className = 'typing';
+  div.innerHTML = `<div class="msg-ai-header" style="margin-bottom:0">PROCESSING</div>
+    <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTyping() {
+  document.getElementById('typing-indicator')?.remove();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  input.value = '';
+  addMessage('user', msg);
+  chatHistory.push({ role: 'user', content: msg });
+  switchTab('ai');  showTyping();
+
+  try {
+    const reply = await callAI(msg);
+    removeTyping();
+    addMessage('ai', reply);
+    chatHistory.push({ role: 'assistant', content: reply });
+  } catch (err) {
+    removeTyping();
+    addMessage('system', `⚠ Внимание: ${err.message}`);
+  }
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+function quickQ(q) {
+  document.getElementById('chat-input').value = q;
+  sendChat();
+}
+
+async function analyzeNodeWithAI(nodeId) {
+  const n = nodes.find(x => x.id === nodeId);
+  if (!n) return;
+
+  const neighbors = edges
+    .filter(e => e.from === n.id || e.to === n.id)
+    .map(e => `${e.from === n.id ? '→' : '←'} ${e.from === n.id ? e.to : e.from} (${e.label})`);
+
+  const prompt = `Проведи детальный анализ узла ${n.id}. Тип: ${n.type}, Риск: ${n.risk}, Объем: $${n.volume}, Транзакций: ${n.tx}. Связи: ${neighbors.join(', ')}. 
+
+Укажи:
+1. Подозрительные паттерны
+2. Потенциальные риски
+3. Рекомендуемые шаги расследования
+4. Связь с другими высокорисковыми узлами
+
+Ответь структурированно на русском.`;
+
+  switchTab('ai');
+  addMessage('user', `Анализ кошелька ${n.id}`);
+  showTyping();
+
+  try {
+    const reply = await callAI(prompt);
+    removeTyping();
+    addMessage('ai', reply, `АНАЛИЗ УЗЛА: ${n.id}`);
+  } catch (err) {
+    removeTyping();    addMessage('system', `⚠ Ошибка: ${err.message}`);
+  }
+}
+
+async function quickAnalyzeAll() {
+  if (!analyticsInstance) analyticsInstance = new GraphAnalytics(nodes, edges);
+  const report = analyticsInstance.generateReport();
+
+  switchTab('ai');
+  addMessage('user', 'Полный AI-анализ графа транзакций');
+  showTyping();
+
+  const prompt = `Сделай полный структурированный отчет по графу транзакций.
+
+Метрики:
+- Общий риск: ${(report.overallRisk * 100).toFixed(1)}%
+- Кластеров: ${report.clusters.length}
+- Путей через миксеры: ${report.mixerPaths.length}
+- Аномалий: ${report.anomalies.length}
+
+Обнаруженные паттерны:
+${report.patterns.slice(0, 5).map(p => `- ${p.type}: ${p.description}`).join('\n')}
+
+Аномалии:
+${report.anomalies.slice(0, 5).map(a => `- ${a.node}: ${a.description}`).join('\n')}
+
+Топ PageRank узлов: ${Object.entries(report.pageRank).sort((a,b) => b[1]-a[1]).slice(0,5).map(([id, s]) => `${id} (${(s*100).toFixed(1)}%)`).join(', ')}
+
+Сформируй отчет с разделами:
+1. **Резюме расследования**
+2. **Критические риски** (конкретные узлы и пути)
+3. **Анализ отмывания** (пути от миксеров к биржам)
+4. **Рекомендации** для compliance
+5. **Финальный вердикт**
+
+Ответь развернуто на русском.`;
+
+  try {
+    const reply = await callAI(prompt);
+    removeTyping();
+    addMessage('ai', reply, 'ПОЛНЫЙ ИНВЕСТИГАЦИОННЫЙ ОТЧЕТ');
+  } catch (err) {
+    removeTyping();
+    addMessage('system', `⚠ Ошибка: ${err.message}`);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// ETHERSCAN INTEGRATION
+// ═══════════════════════════════════════════════════════
+async function fetchEtherscan() {
+  const addr = document.getElementById('addr-input').value.trim();
+  if (!addr) { showToast('Enter an address first'); return; }
+  if (!etherscanKey) { openSettings(); showToast('Set Etherscan API key first'); return; }
+
+  showToast('Fetching from Etherscan...');
+
+  try {
+    const url = `https://api.etherscan.io/api?module=account&action=balance&address=${addr}&tag=latest&apikey=${etherscanKey}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.status === '1') {
+      const ethBal = (parseInt(data.result) / 1e18).toFixed(4);
+      showToast(`Balance: ${ethBal} ETH`);
+    } else {
+      showToast('Etherscan error: ' + data.message);
+    }
+  } catch (e) {
+    showToast('Network error fetching Etherscan');
+  }
+}
+
+function lookupEtherscan(address) {
+  window.open(`https://etherscan.io/address/${address}`, '_blank');
+}
+
+// ═══════════════════════════════════════════════════════
+// ADD NODES
+// ═══════════════════════════════════════════════════════
+
+function addAddressFromInput() {
+  const val = document.getElementById('addr-input').value.trim();
+  if (!val) return;
+
+  const id = 'W-' + String(nodes.length + 1).padStart(3, '0');
+  nodes.push({
+    id, label: id,
+    type: 'wallet',
+    risk: 'medium',
+    address: val,
+    volume: '0',
+    tx: 0,
+    note: 'Manually added'
+  });
+
+  const cx = canvas.width / 2, cy = canvas.height / 2;
+  positions[id] = { x: cx + (Math.random() - 0.5) * 300, y: cy + (Math.random() - 0.5) * 300 };
+  velocities[id] = { x: 0, y: 0 };
+  document.getElementById('addr-input').value = '';
+  renderNodeList();
+  renderAnalytics();
+  showToast(`Added node ${id}`);
+}
+
+function autoLink() {
+  showToast('Auto-link: analyzing common patterns...');
+}
+
+// ═══════════════════════════════════════════════════════
+// IMPORT / EXPORT
+// ═══════════════════════════════════════════════════════
+
+function openImport() {
+  document.getElementById('modal-body').innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Import CSV</div>
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('file-inp').click()">
+      <div class="dropzone-icon">📁</div>
+      <div class="dropzone-text">Drop CSV file here or click to browse</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">Format: id, label, type, risk, address, volume, tx, note</div>
+    </div>
+    <input type="file" id="file-inp" accept=".csv" style="display:none" onchange="handleCSV(event)" />
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button class="btn success" onclick="loadSampleCSV()">Load Sample Data</button>
+      <button class="btn" onclick="closeModal()">Cancel</button>
+    </div>
+  `;
+  openModal();
+}
+
+function handleCSV(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const lines = ev.target.result.split('\n').filter(l => l.trim());
+    const headers = lines[0].split(',').map(h => h.trim());
+    let added = 0;
+    for (let i = 1; i < lines.length; i++) {
+      const vals = lines[i].split(',').map(v => v.trim());
+      const obj = {};
+      headers.forEach((h, j) => obj[h] = vals[j] || '');
+      if (obj.id && !nodes.find(n => n.id === obj.id)) {
+        nodes.push({ id: obj.id, label: obj.label||obj.id, type: obj.type||'wallet', risk: obj.risk||'medium', address: obj.address||'', volume: obj.volume||'0', tx: parseInt(obj.tx)||0, note: obj.note||'' });
+        const cx = canvas.width/2, cy = canvas.height/2;
+        positions[obj.id] = { x: cx + (Math.random()-0.5)*400, y: cy + (Math.random()-0.5)*400 };
+        velocities[obj.id] = { x:0, y:0 };
+        added++;      }
+    }
+    renderNodeList();
+    renderAnalytics();
+    closeModal();
+    showToast(`Imported ${added} nodes from CSV`);
+  };
+  reader.readAsText(file);
+}
+
+function loadSampleCSV() {
+  const csv = `id,label,type,risk,address,volume,tx,note\nW-020,W-020,wallet,high,0xdead...beef,300000,88,New suspect wallet`;
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'sample.csv'; a.click();
+  showToast('Sample CSV downloaded');
+}
+
+async function openExport() {
+  document.getElementById('modal-body').innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Export Investigation Report</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button class="btn primary" onclick="generateAIReport()">⚡ Generate AI Report</button>
+      <button class="btn" onclick="exportCSV()">Export CSV</button>
+      <button class="btn" onclick="exportJSON()">Export JSON</button>
+    </div>
+    <div id="report-area" style="color:var(--text3);font-family:var(--mono);font-size:12px;text-align:center;padding:20px 0">
+      Click "Generate AI Report" for a full intelligence report
+    </div>
+  `;
+  openModal();
+}
+
+async function generateAIReport() {
+  document.getElementById('report-area').innerHTML = `<div style="color:var(--accent);font-family:var(--mono);font-size:12px">⚡ Generating report with AI...</div>`;
+  const prompt = `Сгенерируй формальный структурированный отчет на русском языке по результатам блокчейн-расследования.
+
+Включи разделы:
+1. **Резюме** (краткое описание findings)
+2. **Кошельки высокого риска** (список с обоснованием)
+3. **Анализ путей отмывания** (через миксеры)
+4. **Статистические аномалии**
+5. **Финальный вердикт** compliance-контроля
+
+Используй профессиональную терминологию.`;
+
+  try {
+    const report = await callAI(prompt);    document.getElementById('report-area').innerHTML = `
+      <textarea class="report-out" readonly>${report}</textarea>
+      <div style="margin-top:8px;display:flex;gap:6px">
+        <button class="btn success" onclick="copyReport()">Copy Report</button>
+        <button class="btn" onclick="downloadReport('${encodeURIComponent(report)}')">Download .txt</button>
+      </div>
+    `;
+  } catch (e) {
+    document.getElementById('report-area').innerHTML = `<div style="color:var(--red);font-family:var(--mono);font-size:12px">Error: ${e.message}</div>`;
+  }
+}
+
+function copyReport() {
+  const ta = document.querySelector('.report-out');
+  if (ta) { ta.select(); document.execCommand('copy'); showToast('Report copied!'); }
+}
+
+function downloadReport(encoded) {
+  const text = decodeURIComponent(encoded);
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'cryptosint-report.txt'; a.click();
+}
+
+function exportCSV() {
+  const rows = ['id,label,type,risk,address,volume,tx,note'];
+  nodes.forEach(n => rows.push(`${n.id},${n.label},${n.type},${n.risk},${n.address},${n.volume},${n.tx},"${n.note||''}"`));
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'cryptosint-nodes.csv'; a.click();
+  showToast('CSV exported');
+}
+
+function exportJSON() {
+  const data = { nodes, edges, exportDate: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'cryptosint-graph.json'; a.click();
+  showToast('JSON exported');
+}
+
+// ═══════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════
+
+function openSettings() {
+  document.getElementById('modal-body').innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Settings</div>
+    <div style="margin-bottom:16px">      <div class="section-title" style="margin-bottom:8px">Etherscan API Key</div>
+      <div style="display:flex;gap:8px">
+        <input class="input" id="api-key-inp" placeholder="Your Etherscan API key..." value="${etherscanKey}" style="flex:1" />
+        <button class="btn primary" onclick="saveEtherscanKey()">Save</button>
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:8px">Physics Settings</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn ${physicsOn ? 'primary' : ''}" onclick="physicsOn=true;closeModal();showToast('Physics enabled')">Physics ON</button>
+        <button class="btn ${!physicsOn ? 'danger' : ''}" onclick="physicsOn=false;closeModal();showToast('Physics disabled')">Physics OFF</button>
+      </div>
+    </div>
+  `;
+  openModal();
+}
+
+function saveEtherscanKey() {
+  etherscanKey = document.getElementById('api-key-inp').value.trim();
+  document.getElementById('etherscan-status').textContent = etherscanKey ? 'ETHERSCAN: CONNECTED' : 'ETHERSCAN: KEY NEEDED';
+  const dot = document.getElementById('etherscan-status').previousElementSibling;
+  if (dot) dot.style.background = etherscanKey ? 'var(--green)' : 'var(--orange)';
+  closeModal();
+  showToast('API key saved');
+}
+
+// ═══════════════════════════════════════════════════════
+// MODAL / TABS / TOAST
+// ═══════════════════════════════════════════════════════
+
+function openModal() { document.getElementById('modal-overlay').classList.add('active'); }
+function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+  document.getElementById(`tab-${name}`).classList.add('active');
+  document.getElementById(`tab-content-${name}`).classList.add('active');
+
+  if (name === 'analytics') {
+    setTimeout(renderAnalytics, 50);
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  initPositions();
+});
+
+resizeCanvas();
+initPositions();
+renderNodeList();
+updateGraphStats();
+render();
+
+setTimeout(() => {
+  renderAnalytics();
+  showToast('CryptoSint Pro готов — AI + Analytics активны!');
+}, 800);
+</script>
+</body>
+</html>
